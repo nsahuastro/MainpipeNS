@@ -1,4 +1,10 @@
 figures/
 data/
 mainpip_ns_old.ipynb
-
+*.jsonl
+*.parquet
+*.zip
+*.gz
+*.csv
+*.npz
+*.pkl

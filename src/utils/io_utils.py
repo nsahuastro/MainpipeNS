@@ -40,3 +40,9 @@ def write_jsonl(path, row):
     """Append a single JSON object as a JSONL line."""
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(row) + "\n")
+
+def sample_docs(path, n=3):
+    lines = []
+    with open(path, "r", encoding="utf-8") as f:
+        lines = random.sample(list(f), n)
+    return [json.loads(l)["text"] for l in lines]

@@ -6,6 +6,7 @@ import numpy as np
 from detectors.html_detect import has_html
 from detectors.language_detect import detect_lang
 from detectors.code_ASCII_detect import code_fraction
+from detectors.code_strong_detect import code_fraction_strong
 
 
 def quick_stats(filepath, sample_size=20000):
@@ -156,7 +157,8 @@ def classify_doc(text):
         return "HTML"
     
     # Code-heavy comes next
-    if code_fraction(text) > 0.40:
+    #code_fraction_strong or code_fraction
+    if code_fraction_strong(text) > 0.40:
         return "CODE_HEAVY"
     
     # OTHER Languages

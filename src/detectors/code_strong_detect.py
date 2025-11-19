@@ -1,9 +1,6 @@
 import re
 
-# -----------------------------
-# 1. CODE-SPECIFIC SIGNALS
-# -----------------------------
-
+# CODE-SPECIFIC SIGNALS
 # Many programming languages use ; to end statements
 SEMICOLON_LINE = re.compile(r";\s*$")
 
@@ -34,9 +31,8 @@ FENCED_CODE = re.compile(r"```|<code>|</code>|<pre>|</pre>")
 SYMBOL_HEAVY = re.compile(r"^[^A-Za-z0-9]{4,}$")
 
 
-# -----------------------------
 # MAIN LINE-LEVEL DETECTOR
-# -----------------------------
+
 def is_code_line_strong(line: str) -> bool:
     line = line.strip()
 
@@ -80,9 +76,8 @@ def is_code_line_strong(line: str) -> bool:
     return False
 
 
-# -----------------------------
 # DOCUMENT-LEVEL CODE FRACTION
-# -----------------------------
+
 def code_fraction_strong(text: str) -> float:
     lines = [l for l in text.splitlines() if l.strip()]
     if not lines:
@@ -92,8 +87,7 @@ def code_fraction_strong(text: str) -> float:
     return code_lines / len(lines)
 
 
-# -----------------------------
+
 # YES/NO CODE CLASSIFICATION
-# -----------------------------
 def is_code_document_strong(text: str, threshold: float = 0.40) -> bool:
     return code_fraction_strong(text) > threshold

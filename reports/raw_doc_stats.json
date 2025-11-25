@@ -1,0 +1,24 @@
+{
+  "file": "data/raw/mainpipe_data_v1.jsonl",
+  "file_size_mb": 439.228,
+  "total_lines": 269378,
+  "sampled": 25000,
+  "avg_length": 1589.76288,
+  "median_length": 752.0,
+  "p10": 187.0,
+  "p90": 3211.0,
+  "max_length": 178482,
+  "min_length": 2,
+  "empty_pct": 0.0,
+  "short_pct": 3.832,
+  "top_keys": [
+    [
+      "text",
+      25000
+    ],
+    [
+      "url",
+      25000
+    ]
+  ]
+}

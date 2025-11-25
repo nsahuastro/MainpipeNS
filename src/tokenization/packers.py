@@ -53,6 +53,7 @@ def pack_to_variable_blocks(
             total_blocks += 1
 
     print(f"Total variable-size blocks (padded last only): {total_blocks}")
+    return total_blocks
 
 
 
@@ -108,6 +109,7 @@ def pack_to_fixed_blocks(
             total_blocks += 1
 
     print(f"Total fixed-length blocks written: {total_blocks}")
+    return total_blocks
 
 
 

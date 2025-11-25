@@ -1,4 +1,3 @@
-import json
 import os
 
 def shard_packed_dataset(

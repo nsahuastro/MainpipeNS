@@ -1,0 +1,8 @@
+{
+  "docs_counted": 30000,
+  "avg_tokens": 423.7236,
+  "median_tokens": 203.0,
+  "p95_tokens": 1319.0,
+  "p99_tokens": 4005.019999999997,
+  "max_tokens": 12302
+}

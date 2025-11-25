@@ -10,7 +10,6 @@ def plot_summary_percentage(summary_pct): #sample_size=25000
     plt.ylabel("Percentage (%)")
     plt.title("Dataset Quality (percentage)")
     plt.tight_layout()
-    #plt.show()
     return fig
 
 def plot_cleaning_report(counters, title="Cleaning Report"):
@@ -23,5 +22,4 @@ def plot_cleaning_report(counters, title="Cleaning Report"):
     plt.ylabel("Document Count")
     plt.title(title)
     plt.tight_layout()
-    #plt.show()
     return fig

@@ -165,3 +165,32 @@ def token_length_stats(path, encoder, max_docs=None):
 
     return arr
 
+def token_length_stats2(path, encoder, max_docs=None):
+    lengths = []
+
+    with open(path, "r", encoding="utf-8") as f:
+        for i, line in enumerate(f):
+            if max_docs is not None and i >= max_docs:
+                break
+
+            row = json.loads(line)
+            text = row.get("text", "")
+            if not text.strip():
+                continue
+
+            tokens = encoder.encode(text, allowed_special="all")
+            lengths.append(len(tokens))
+
+    arr = np.array(lengths)
+
+    stats = {
+        "docs_counted": int(len(arr)),
+        "avg_tokens": float(arr.mean()),
+        "median_tokens": float(np.median(arr)),
+        "p95_tokens": float(np.percentile(arr, 95)),
+        "p99_tokens": float(np.percentile(arr, 99)),
+        "max_tokens": int(arr.max())
+    }
+
+    print(stats)
+    return arr, stats

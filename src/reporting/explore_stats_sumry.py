@@ -3,10 +3,120 @@ import random
 from collections import Counter
 import os
 import numpy as np
-from detectors.html_detect import has_html
-from detectors.language_detect import detect_lang
-from detectors.code_ASCII_detect import code_fraction
-from detectors.code_strong_detect import code_fraction_strong
+from src.detectors.html_detect import has_html
+from src.detectors.language_detect import detect_lang
+from src.detectors.code_ASCII_detect import code_fraction
+from src.detectors.code_strong_detect import code_fraction_strong
+import matplotlib.pyplot as plt
+
+
+def quick_stats_report(
+    filepath,
+    sample_size=20000,
+    save_json_path=None,
+    save_fig_path=None
+):
+    """
+    Compute quick statistics of a JSONL dataset.
+
+    Args:
+        filepath        : raw jsonl file
+        sample_size     : max lines to inspect
+        save_json_path  : where to save stats JSON 
+        save_fig_path   : where to save histogram plot 
+
+    Returns:
+        stats (dict)
+    """
+
+    key_counts = Counter()
+    length_distribution = []
+    empty_count = 0
+    short_count = 0
+    limit = sample_size
+
+    # file size
+    file_size_bytes = os.path.getsize(filepath)
+    file_size_mb = file_size_bytes / (1024 * 1024)
+
+    # count total lines
+    with open(filepath, "r", encoding="utf-8") as f:
+        total_lines = sum(1 for _ in f)
+
+    # read sample
+    with open(filepath, "r", encoding="utf-8") as f:
+        for i, line in enumerate(f):
+            if i >= limit:
+                break
+
+            try:
+                row = json.loads(line)
+            except:
+                continue
+
+            key_counts.update(row.keys())
+            text = row.get("text", "")
+
+            L = len(text)
+            length_distribution.append(L)
+
+            if L == 0:
+                empty_count += 1
+            if L < 100:
+                short_count += 1
+
+    arr = np.array(length_distribution)
+
+    # ---- SUMMARY DICT ----
+    stats = {
+        "file": filepath,
+        "file_size_mb": round(file_size_mb, 3),
+        "total_lines": total_lines,
+        "sampled": min(sample_size, total_lines),
+        "avg_length": float(arr.mean()),
+        "median_length": float(np.median(arr)),
+        "p10": float(np.percentile(arr, 10)),
+        "p90": float(np.percentile(arr, 90)),
+        "max_length": int(arr.max()),
+        "min_length": int(arr.min()),
+        "empty_pct": float(empty_count / len(arr) * 100),
+        "short_pct": float(short_count / len(arr) * 100),
+        "top_keys": key_counts.most_common(10),
+    }
+
+    # ---- PRINT SUMMARY ----
+    print("\n=== QUICK STATS REPORT ===")
+    for k, v in stats.items():
+        if k == "top_keys":
+            print(f"{k}: {v}")
+        else:
+            print(f"{k}: {v}")
+    print("==========================\n")
+
+    # ---- SAVE JSON ----
+    if save_json_path:
+        os.makedirs(os.path.dirname(save_json_path), exist_ok=True)
+        with open(save_json_path, "w") as f:
+            json.dump(stats, f, indent=2)
+        print(f"[quick_stats] Saved stats in {save_json_path}")
+
+    # ---- SAVE FIGURE ----
+    if save_fig_path:
+        plt.figure(figsize=(10, 6))
+        plt.hist(arr, bins=100, color="steelblue", alpha=0.7)
+        plt.xlabel("Document Length (characters)")
+        plt.ylabel("Count")
+        plt.title("Histogram of Document Length")
+        plt.tight_layout()
+
+        os.makedirs(os.path.dirname(save_fig_path), exist_ok=True)
+        plt.savefig(save_fig_path, format="pdf", dpi=300, bbox_inches="tight")
+        plt.close()
+
+        print(f"[quick_stats] Saved histogram in {save_fig_path}")
+
+    return stats
+
 
 
 def quick_stats(filepath, sample_size=20000):

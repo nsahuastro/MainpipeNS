@@ -2,13 +2,13 @@ import json
 from collections import Counter
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from utils.io_utils import stream_jsonl, write_jsonl
-from detectors.html_detect import has_html, strip_html
-from detectors.language_detect import detect_lang
-from detectors.code_ASCII_detect import code_fraction
-from detectors.code_strong_detect import code_fraction_strong
+from src.utils.io_utils import stream_jsonl, write_jsonl
+from src.detectors.html_detect import has_html, strip_html
+from src.detectors.language_detect import detect_lang
+from src.detectors.code_ASCII_detect import code_fraction
+from src.detectors.code_strong_detect import code_fraction_strong
 
-from cleaning.txt_norm_pipe import normalize_text
+from src.cleaning.txt_norm_pipe import normalize_text
 
 def clean_dataset(input_path, output_path, verbose=True):
 
@@ -65,10 +65,11 @@ def clean_dataset(input_path, output_path, verbose=True):
             fout.write(json.dumps({"text": text}) + "\n")
             counters["KEPT"] += 1
 
+    total = sum(counters.values())
     if verbose:
         print("\n=== CLEANING FINISHED ===")
         for k, v in counters.items():
-            print(f"{k}: {v:,}")
+            print(f"{k}: {v:,} ({v*100/total:6.2f}%) ")
 
     return counters
 

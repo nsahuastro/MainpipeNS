@@ -1,5 +1,5 @@
 import json
-from utils.hash_utils import hash_text, simhash_text
+from src.utils.hash_utils import hash_text, simhash_text
 
 def dedup_exact(input_path, output_path):
     seen = set()
@@ -26,7 +26,7 @@ def dedup_exact(input_path, output_path):
             kept += 1
             fout.write(json.dumps(row) + "\n")
 
-    print(f"Exact dedup done: kept={kept:,}, dropped={dropped:,}")
+    print(f"Exact deduplication done: kept={kept:,}, dropped={dropped:,}")
 
 
 def dedup_near(input_path, output_path, hamming_threshold=3):

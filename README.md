@@ -26,28 +26,86 @@ python main.py --raw path/to/raw.jsonl
 ```
 MainpipeNS/
 │
-├── main.py                         # Main CLI pipeline
+├── main.py                                # Main CLI pipeline entry point
+│
+├── notebooks/                             # Interactive Jupyter workflows
+│   ├── 01_data_inspection.ipynb           # Raw data inspection, stats, sampling
+│   ├── 02_cleaning_notebook.ipynb         # Interactive cleaning pipeline
+│   └── 03_tokenization.ipynb              # Tokenizer + packing experiments
 │
 ├── data/
-│   ├── raw/                        # Raw input files
-│   ├── dedup/                      # After deduplication
-│   ├── clean/                      # After full cleaning
-│   └── final/
-│       ├── tokenized.jsonl
-│       ├── packed_blocks.jsonl
-│       ├── sharded_dataset/
-│       └── meta.json
+│   ├── raw/                               # Raw input JSONL files
+│   ├── dedup/                             # After exact deduplication
+│   ├── clean/                             # Fully cleaned dataset
+│   └── final/                             # Final training-ready files
+│       ├── tokenized.jsonl                # Tokenized with GPT-2 extended BPE
+│       ├── packed_blocks.jsonl            # Fixed 2048-token blocks
+│       ├── sharded_dataset/               # Train/Val/Test shards
+│       └── meta.json                      # Metadata of full pipeline run
 │
-├── figures/                        # Auto-generated plots
-├── reports/                        # JSON summary reports
+├── reports/                                # JSON reports: stats, pct, quality
+│   ├── raw_doc_stats.json
+│   ├── raw_category_pct.json
+│   ├── clean_category_pct.json
+│   ├── token_length_stats.json
+│   └── quality_report.json
+│
+├── figures/                                # Saved histograms and plots
+│   ├── raw_doc_length_hist.pdf
+│   ├── raw_category_pct.pdf
+│   ├── clean_category_pct.pdf
+│   └── clean_data_hist.pdf
+│
+├── logs/                                   # Auto-generated runtime logs
+│   └── run_YYYYMMDD_HHMMSS.log
 │
 ├── src/
-│   ├── cleaning/                   # Dedup + cleaning modules
-│   ├── detectors/                  # HTML, code, language
-│   ├── reporting/                  # Stats, quality report, meta-writer
-│   ├── tokenization/               # Tokenizers, packers, sharders
-│   └── utils/                      # IO utilities
+│   ├── cleaning/
+│   │   ├── deduplication_pipe.py          # Exact SHA-256 dedup
+│   │   ├── clean_pipe.py                  # HTML/Language/Code/Length cleaning
+│   │   └── txt_norm_pipe.py               # Normalization utilities
+│   │
+│   ├── detectors/
+│   │   ├── html_detect.py                 # HTML detection + stripping
+│   │   ├── code_ASCII_detect.py           # Simple code heuristics
+│   │   ├── code_strong_detect.py          # Strong multi-language code detector
+│   │   └── language_detect.py             # Lingua-based EN detection
+│   │
+│   ├── reporting/
+│   │   ├── explore_stats_sumry.py         # Stats + category classifiers
+│   │   ├── viz_plots.py                   # Matplotlib/Plotly charts
+│   │   ├── quality_reporter.py            # Toxicity, PII, perplexity
+│   │   └── meta_writer.py                 # meta.json generator
+│   │
+│   ├── tokenization/
+│   │   ├── tokenizers.py                  # GPT-2 BPE tokenizer + BOS/EOS/PAD
+│   │   ├── packers.py                     # 2048-token packers
+│   │   └── sharders.py                    # Train/Val/Test shard writer
+│   │
+│   └── utils/
+│       ├── io_utils.py                    # JSONL streaming + file helpers
+│       └── hashing.py                     # Hashing utilities for dedup
+│
+└── README.md                               # Project documentation
+
 ```
+## 2.1 Notebooks
+
+Interactive Jupyter notebooks are provided for step-by-step exploration and debugging of the pipeline:
+
+- **`01_data_inspection.ipynb`**  
+  Raw dataset exploration: key statistics, length histograms, category sampling, HTML/code checks.
+
+- **`02_cleaning_notebook.ipynb`**  
+  Runs the full cleaning pipeline interactively, inspects kept vs. dropped samples, and visualizes cleaning outcomes.
+
+- **`03_tokenization.ipynb`**  
+  Experiments with the tokenizer, verifies special tokens, checks token-length distributions, and previews packing behavior (2048-token blocks).
+
+> **Note:**  
+> Quality checks (toxicity, PII, perplexity) are run only via the CLI (`main.py`)  
+> and are **not included** in the notebooks.
+
 
 ## 3. Source Data
 

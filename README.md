@@ -1,104 +1,311 @@
-# MainpipeNS English Pretraining Dataset
+MainpipeNS — English Pretraining Dataset Pipeline
+1. Overview
 
-## 1. Overview
+MainpipeNS is a full end-to-end data pipeline for preparing a high-quality English-language corpus suitable for LLM pretraining.
+It performs:
 
-This dataset is an English-language corpus prepared for LLM pretraining.  
-The pipeline performs:
+Raw dataset inspection + reporting
 
-- Document-level **deduplication** (exact and near-duplicate)
-- **HTML stripping** and boilerplate removal
-- **Language filtering** to keep only English
-- **Code-heavy document filtering**
-- Length-based filtering (remove ultra-short and ultra-long docs)
-- Text **normalization** (whitespace, control chars, line breaks)
-- **Tokenization** with a GPT-2–style BPE + special tokens
-- **Packing** into fixed-length 2048-token blocks
-- **Sharding** into train / val / test splits
+Document-level deduplication
 
-All intermediate steps are implemented in Python under `src/` and orchestrated via notebooks in `notebooks/`.
+Cleaning and normalization (HTML, boilerplate, non-English, code-heavy)
 
----
+Tokenization using an extended GPT-2 BPE tokenizer
 
-## 2. Source Data
+Packing into fixed-length 2048-token blocks
 
-- Input format: JSONL
-- Keys: `{"text": ..., "url": ...}` (only `text` is used)
-- Total raw lines: ~269k
-- Raw file: `data/raw/mainpipe_data_v1.jsonl`
+Sharding into train / val / test subsets
 
----
+Quality report (toxicity, PII, perplexity, language coverage)
 
-## 3. Cleaning & Normalisation Pipeline
+Metadata generation (meta.json)
 
-Cleaning is implemented in `src/cleaning/clean_pipe.py`:
+The entire pipeline is orchestrated via:
 
-Steps:
+python main.py --raw path/to/raw.jsonl
 
-1. **Exact deduplication**  
-   - Hash: SHA-256 of full `text`  
-   - Function: `dedup_exact(input_path, output_path)`  
-   - Output: `data/dedup/mainpipe_data_deduplicated.jsonl`
+2. Repository Structure
+MainpipeNS/
+│
+├── main.py                         # Main CLI pipeline
+│
+├── data/
+│   ├── raw/                        # Raw input files
+│   ├── dedup/                      # After deduplication
+│   ├── clean/                      # After full cleaning
+│   └── final/
+│       ├── tokenized.jsonl
+│       ├── packed_blocks.jsonl
+│       ├── sharded_dataset/
+│       └── meta.json
+│
+├── figures/                        # Auto-generated plots
+├── reports/                        # JSON summary reports
+│
+├── src/
+│   ├── cleaning/                   # Dedup + cleaning modules
+│   ├── detectors/                  # HTML, code, language
+│   ├── reporting/                  # Stats, quality report, meta-writer
+│   ├── tokenization/               # Tokenizers, packers, sharders
+│   └── utils/                      # IO utilities
 
-2. **HTML detection & stripping**  
-   - HTML detection via regexes (`has_html`)  
-   - Stripping with `strip_html` to drop tags, scripts, boilerplate.
+3. Source Data
 
-3. **Language filtering**  
-   - Library: `lingua` / `LanguageDetector`  
-   - Keep only documents detected as **EN** after HTML stripping.
+Format: JSON Lines (JSONL)
 
-4. **Code-heavy filtering**  
-   - Strong code heuristics via `is_strong_code_line` patterns (Python/JS/C++/Rust/Java).  
-   - Compute `code_fraction(text)` over non-empty lines.  
-   - Drop documents with `code_fraction > 0.40`.
+Minimum expected key: "text"
 
-5. **Length-based filtering**  
-   - Drop docs with `len(text) < 200` characters  
-   - Drop docs with `len(text) > 50_000` characters  
+Only "text" is processed; other metadata keys are ignored.
 
-6. **Text normalization** (`normalize_text`)  
-   - Remove zero-width and BOM chars
-   - Normalize non-breaking spaces
-   - Collapse internal whitespace
-   - Preserve sentence punctuation and semantic structure
+Example raw dataset:
 
-**Cleaning summary (example):**
+data/raw/mainpipe_data_v1.jsonl   (~269k lines)
 
-- HTML stripped       : 53,294 docs  
-- Non-English removed : 21,200 docs  
-- Code-heavy removed  : 72,472 docs  
-- Too short removed   : 19,622 docs  
-- Too long removed    : 282 docs  
-- **Kept for tokenization**: 107,320 docs (~39% of deduplicated corpus)
+4. Cleaning & Normalisation
 
-(Adjust to your final numbers.)
+Implemented in src/cleaning/clean_pipe.py.
 
----
+4.1 Cleaning Steps
 
-## 4. Tokenization & Special Tokens
+Exact deduplication
+Function: dedup_exact()
 
-Tokenizer based on **GPT-2 BPE** (via `tiktoken`):
+SHA-256 fingerprint
 
-- Base encoding: `tiktoken.get_encoding("gpt2")`
-- Extended with 4 special tokens:
+Removes duplicate text entries
 
-  - `<|bos|>` – beginning of sequence  
-  - `<|eos|>` – end of sequence  
-  - `<|pad|>` – padding  
-  - `<|unk|>` – unknown (rarely used for GPT-2 BPE, but reserved)
+HTML filtering & stripping
 
-Total vocab size:
+has_html() detection
 
-- Base GPT-2: 50,257  
-- Extended: 50,261
+Remove HTML tags, scripts, inline styling, boilerplate
 
-Tokenization:
+Language filtering (English only)
 
-- For each cleaned document:  
-  `ids = [BOS] + enc.encode(text) + [EOS]`  
-- Sequences truncated to `max_seq_len = 2048`.
+Uses detect_lang() (lingua-based)
 
-Output format: JSONL
+Removes non-EN documents
 
-```json
+Code-heavy filtering
+
+Regex-based detection of Python/JS/C++/Java/Rust patterns
+
+Compute code_fraction_strong()
+
+Drop docs with >40% code lines
+
+Length filtering
+
+Drop docs <200 chars
+
+Drop docs >50,000 chars
+
+Normalization (normalize_text)
+
+Remove zero-width & BOM chars
+
+Normalize whitespace (collapse multi-spaces)
+
+Remove accidental line breaks
+
+Keep natural punctuation and structure
+
+4.2 Example Cleaning Summary
+HTML_STRIPPED   : 53,294
+NON_ENGLISH     : 21,200
+CODE_HEAVY      : 72,472
+TOO_SHORT       : 19,622
+TOO_LONG        : 282
+KEPT            : 107,320   (39.1%)
+
+5. Tokenization (GPT-2 Extended)
+
+Tokenizer implemented in:
+
+src/tokenization/tokenizers.py
+
+5.1 Base encoding
+
+GPT-2 BPE (tiktoken.get_encoding("gpt2"))
+
+5.2 Added special tokens
+<|bos|>   # begin sequence
+<|eos|>   # end sequence
+<|pad|>   # padding (used during packing)
+<|unk|>   # unknown
+
+5.3 Procedure
+
+For each cleaned document:
+
+ids = [BOS] + enc_ext.encode(text) + [EOS]
+
+
+Sequences longer than 2048 are truncated and forced to end with EOS.
+
+5.4 Tokenized Output Format
 {"input_ids": [50257, 123, 456, ..., 50258], "length": 187}
+
+6. 2048-Token Packing
+
+Implemented in:
+
+src/tokenization/packers.py
+
+Goal
+
+Transform variable-length tokenized documents into fixed 2048-token blocks, suitable for transformer training.
+
+Method
+
+Documents are concatenated sequentially
+
+When a block would overflow, it is padded with <|pad|>
+
+Final block also padded to exactly 2048 tokens
+
+Output: data/final/packed_blocks.jsonl
+
+Each line:
+
+{"input_ids": [...2048 tokens...], "length": 2048}
+
+7. Sharding (Train / Val / Test)
+
+Implemented in:
+
+src/tokenization/sharders.py
+
+
+Current split:
+
+train: 98%
+val  : 1%
+test : 1%
+
+
+Shards are written to:
+
+data/final/sharded_dataset/
+
+
+Each shard contains up to 50,000 packed examples.
+
+8. Quality Report
+
+Implemented in:
+
+src/reporting/quality_reporter.py
+
+
+Runs on cleaned data.
+Metrics:
+
+8.1 PII Detection
+
+Email
+
+Phone numbers
+
+Credit-card–like patterns
+
+8.2 Toxicity (Detoxify)
+
+Outputs avg + max toxicity.
+
+8.3 Perplexity Proxy (GPT-2 small)
+
+A small LM is used to estimate corpus difficulty.
+
+8.4 Language Distribution
+
+Uses detect_lang().
+
+Output example:
+
+samples_analyzed: 1500
+pii_hits: {"email": 27, "phone": 57, "credit_card": 11}
+toxicity: avg=0.0085, max=0.8266
+perplexity: avg=44.8, median=34.2
+language_distribution: {"EN": 1500}
+
+
+Saved to:
+
+reports/quality_report.json
+
+9. Metadata (meta.json)
+
+Created by:
+
+src/reporting/meta_writer.py
+
+
+Contains:
+
+pipeline version
+timestamp
+tokenizer info (vocab size, special tokens)
+cleaning summary
+total packed blocks
+shard information
+
+
+Saved at:
+
+data/final/meta.json
+
+10. Running the Pipeline via CLI
+10.1 Basic usage
+python main.py --raw data/raw/mainpipe_data_v1.jsonl
+
+10.2 What happens when you run it
+
+The pipeline automatically performs:
+
+Raw inspection + summary reports
+
+Deduplication
+
+Cleaning
+
+Cleaned dataset inspection
+
+Token length stats
+
+Tokenization (BOS/EOS)
+
+Packing into 2048-token blocks
+
+Train/Val/Test sharding
+
+Quality report
+
+Metadata export
+
+All outputs saved under:
+
+reports/
+figures/
+data/dedup/
+data/clean/
+data/final/
+
+11. Outputs Produced by the Pipeline
+File / Folder	Description
+reports/raw_doc_stats.json	Raw key/length distribution
+reports/raw_category_pct.json	Category distribution (raw)
+reports/clean_category_pct.json	Category distribution (cleaned)
+reports/token_length_stats.json	Token length statistics
+reports/quality_report.json	PII, toxicity, perplexity, language
+figures/*.pdf	Histograms and category plots
+data/dedup/*.jsonl	Deduplicated dataset
+data/clean/*.jsonl	Fully cleaned dataset
+data/final/tokenized.jsonl	Tokenized documents
+data/final/packed_blocks.jsonl	2048-token fixed blocks
+data/final/sharded_dataset/	Train/Val/Test shards
+data/final/meta.json	Pipeline metadata
+12. Contact / Notes
+
+This pipeline is part of a pretraining dataset preparation project for building an indigenous Australian LLM foundation model.
+Designed for reproducibility, transparency, and fault-tolerance.

@@ -29,9 +29,9 @@ MainpipeNS/
 ├── main.py                                # Main CLI pipeline entry point
 │
 ├── notebooks/                             # Interactive Jupyter workflows
-│   ├── 01_data_inspection.ipynb           # Raw data inspection, stats, sampling
-│   ├── 02_cleaning_notebook.ipynb         # Interactive cleaning pipeline
-│   └── 03_tokenization.ipynb              # Tokenizer + packing experiments
+│   ├── data_inspection.ipynb           # Raw data inspection, stats, sampling
+│   ├── cleaning_notebook.ipynb         # Interactive cleaning pipeline
+│   └── tokenization.ipynb              # Tokenizer + packing experiments
 │
 ├── data/
 │   ├── raw/                               # Raw input JSONL files

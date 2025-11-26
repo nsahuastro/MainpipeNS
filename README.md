@@ -93,18 +93,17 @@ MainpipeNS/
 
 Interactive Jupyter notebooks are provided for step-by-step exploration and debugging of the pipeline:
 
-- **`01_data_inspection.ipynb`**  
+- **`data_inspection.ipynb`**  
   Raw dataset exploration: key statistics, length histograms, category sampling, HTML/code checks.
 
-- **`02_cleaning_notebook.ipynb`**  
+- **`cleaning_notebook.ipynb`**  
   Runs the full cleaning pipeline interactively, inspects kept vs. dropped samples, and visualizes cleaning outcomes.
 
-- **`03_tokenization.ipynb`**  
-  Experiments with the tokenizer, verifies special tokens, checks token-length distributions, and previews packing behavior (2048-token blocks).
+- **`tokenization.ipynb`**  
+  Experiments with the tokenizer, verifies special tokens, checks token-length distributions,  previews packing behavior (2048-token blocks), and performs sharding.
 
 > **Note:**  
-> Quality checks (toxicity, PII, perplexity) are run only via the CLI (`main.py`)  
-> and are **not included** in the notebooks yet.
+> Quality checks (toxicity, PII, perplexity) are included in main.py, so run the pipeline via the CLI (`main.py`)  
 
 
 ## 3. Source Data
@@ -230,7 +229,7 @@ Implemented in: `src/tokenization/sharders.py`
 
 Shards are written to: `data/final/sharded_dataset/`
 
-Each shard contains up to 50,000 packed examples.
+Each shard in principle contains up to 50,000 packed examples. 
 
 ## 8. Quality Report
 
@@ -336,7 +335,7 @@ pip install -r requirements.txt
 python main.py --raw data/raw/mainpipe_data_v1.jsonl
 ```
 
-### 11.2 What happens when you run it
+### 11.2 After running above command
 
 The pipeline automatically performs:
 
@@ -373,4 +372,4 @@ All outputs saved under: `reports/`, `figures/`, `data/dedup/`, `data/clean/`, `
 ## 13. Contact / Notes
 
 - This pipeline is part of a pretraining dataset preparation for LLM foundation model.
-- contact nsahu.astro@gmail.com for any questions or suggestions.
+- contact nsahu.astro@gmail.com for any questions or feedback.

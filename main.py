@@ -2,25 +2,16 @@ import os
 import argparse
 import logging
 from datetime import datetime
-#import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import random
 import json 
-#import numpy as np
-#import tiktoken
-
-#from src.utils.io_utils import ensure_dir, read_jsonl, sample_jsonl, sample_docs
 
 from src.reporting.explore_stats_sumry import quick_stats_report, summarize_dataset_exclusive
 from src.reporting.meta_writer import write_meta
 from src.reporting.viz_plots import plot_summary_percentage, plot_cleaning_report
 
-#from src.detectors.html_detect import show_html_examples
-#from src.detectors.code_ASCII_detect import detect_non_ascii
-#from src.detectors.language_detect import sample_language_distribution
-
 from src.cleaning.deduplication_pipe import dedup_exact
-from src.cleaning.clean_pipe import clean_dataset, print_cleaning_summary
+from src.cleaning.clean_pipe import clean_dataset
 from src.reporting.quality_reporter import quality_report
 
 from src.tokenization.tokenizers import base_enc, enc_ext, tokenize_ext_to_jsonl, token_length_stats2

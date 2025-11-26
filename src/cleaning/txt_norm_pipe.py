@@ -37,7 +37,7 @@ def normalize_text(text):
     text = re.sub(r"\n{3,}", "\n\n", text)
 
     return text.strip()
-# ALTERNATIVE NORMALIZATION FUNCTION that collapses newlines
+
     
 def normalize_text(text):
     text = re.sub(r"[\u200B-\u200D\uFEFF]", "", text)

@@ -104,7 +104,7 @@ Interactive Jupyter notebooks are provided for step-by-step exploration and debu
 
 > **Note:**  
 > Quality checks (toxicity, PII, perplexity) are run only via the CLI (`main.py`)  
-> and are **not included** in the notebooks.
+> and are **not included** in the notebooks yet.
 
 
 ## 3. Source Data
@@ -329,7 +329,50 @@ All outputs saved under: `reports/`, `figures/`, `data/dedup/`, `data/clean/`, `
 | `data/final/sharded_dataset/` | Train/Val/Test shards |
 | `data/final/meta.json` | Pipeline metadata |
 
-## 12. Contact / Notes
+## 12. Requirements & Installation
 
-- This pipeline is part of a pretraining dataset preparation project for building an indigenous Australian LLM foundation model.
-- Designed for reproducibility, transparency, and fault-tolerance.
+### 12.1 Python Version
+
+- The pipeline is build using **Python 3.13.0** , it should work with **Python 3.10+** 
+
+### 12.2 Dependencies
+
+MainpipeNS requires the following packages:
+
+| Package | Purpose |
+|---------|---------|
+| `numpy` | Numerical array operations, statistics |
+| `regex` | Advanced regex patterns for text normalization |
+| `matplotlib` | Histogram and distribution visualization |
+| `lingua` | Language detection (English filtering) |
+| `detoxify` | Toxicity scoring for quality reports |
+| `tiktoken` | GPT-2 BPE tokenization |
+| `simhash` | Fuzzy deduplication (optional) |
+| `torch` | PyTorch dependency for transformers |
+| `transformers` | Hugging Face models (GPT-2 for perplexity) |
+| `tqdm` | Progress bars for long-running tasks |
+
+### 12.3 Installation
+
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/yourusername/MainpipeNS.git
+cd MainpipeNS
+
+# Create virtual environment (recommended)
+python3.13 -m venv venv
+source venv/bin/activate  # On macOS/Linux
+# or
+venv\Scripts\activate     # On Windows
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+---
+
+## 13. Contact / Notes
+
+- This pipeline is part of a pretraining dataset preparation for LLM foundation model.
+- contact nsahu.astro@gmail.com for any questions or suggestions.

@@ -25,23 +25,23 @@ def clean_dataset(input_path, output_path, verbose=True):
                 counters["MALFORMED"] += 1
                 continue
 
-            # 1. Empty
+            # Empty
             if not text:
                 counters["EMPTY"] += 1
                 continue
 
-            # 2. Strip HTML
+            # Strip HTML
             if has_html(text):
                 counters["HTML_STRIPPED"] += 1
                 text = strip_html(text)
 
-            # 3. Language detection
+            # Language detection
             lang = detect_lang(text)
             if lang != "EN":
                 counters["NON_ENGLISH"] += 1
                 continue
 
-            # 4. Code-heavy filtering
+            # Code-heavy filtering
             #if code_fraction(text) > 0.40:
             #    counters["CODE_HEAVY"] += 1
             #    continue
@@ -49,7 +49,7 @@ def clean_dataset(input_path, output_path, verbose=True):
                 counters["CODE_HEAVY"] += 1
                 continue
 
-            # 5. Length rules
+            # Length rules
             L = len(text)
             if L < 200:
                 counters["TOO_SHORT"] += 1
@@ -58,7 +58,7 @@ def clean_dataset(input_path, output_path, verbose=True):
                 counters["TOO_LONG"] += 1
                 continue
 
-            # 6. Normalize
+            # Normalize
             text = normalize_text(text)
 
             # Save cleaned doc
@@ -78,7 +78,6 @@ def print_cleaning_summary(counters):
     print("\n========== CLEANING SUMMARY ==========")
     total = sum(counters.values())
 
-    # Explicitly print removals first
     removal_keys = [
         "EMPTY", "HTML_STRIPPED", "NON_ENGLISH", "CODE_HEAVY",
         "TOO_SHORT", "TOO_LONG", "MALFORMED"

@@ -1,0 +1,20 @@
+{
+  "samples_analyzed": 1500,
+  "pii_hits": {
+    "email": 27,
+    "phone": 57,
+    "credit_card": 11
+  },
+  "toxicity": {
+    "avg": 0.008553076535463333,
+    "max": 0.8266723155975342
+  },
+  "perplexity": {
+    "avg": 44.81059562158585,
+    "median": 34.213706970214844
+  },
+  "language_distribution": {
+    "EN": 1500
+  },
+  "analysis_time_sec": 204.78
+}

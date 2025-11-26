@@ -21,6 +21,7 @@ from src.reporting.viz_plots import plot_summary_percentage, plot_cleaning_repor
 
 from src.cleaning.deduplication_pipe import dedup_exact
 from src.cleaning.clean_pipe import clean_dataset, print_cleaning_summary
+from src.reporting.quality_reporter import quality_report
 
 from src.tokenization.tokenizers import base_enc, enc_ext, tokenize_ext_to_jsonl, token_length_stats2
 from src.tokenization.tokenizers import BOS_ID, EOS_ID, PAD_ID, special_tokens
@@ -126,9 +127,25 @@ def run_pipeline(args):
 
     logger.info(f"Saved clean category percentage plot to {fig_path}")
 
+    # clean data quality report
+    logger.info("Running quality report on cleaned dataset...")
+    quality = quality_report(clean_path,
+                            sample_size=1500,
+                            save_path="reports/quality_report.json"
+            )
+    
+    logger.info(json.dumps(quality, indent=2))
+    print("\n=*= Quality Report =*=")
+    for k, v in quality.items():
+        print(f"{k:20}: {v}")
+
+    logger.info("Quality report:")
+    logger.info(json.dumps(quality, indent=2))
+    print("[INFO] Saved quality report to reports/quality_report.json")
+
     #token length stats
     logger.info("Computing token length stats…")
-    _, token_stats = token_length_stats2(clean_path, encoder=enc_ext, max_docs=30000)
+    _, token_stats = token_length_stats2(clean_path, encoder=enc_ext, max_docs=None)
 
     stats_path = "reports/token_length_stats.json"
     with open(stats_path, "w") as f:

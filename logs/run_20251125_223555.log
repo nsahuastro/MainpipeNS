@@ -1,0 +1,53 @@
+2025-11-25 22:35:55 [INFO] =*= Starting MainpipeNS pipeline =*=
+2025-11-25 22:35:55 [INFO] Inspecting raw file...
+2025-11-25 22:35:55 [INFO] Raw quick_stats:
+2025-11-25 22:35:55 [INFO] {
+  "file": "data/raw/mainpipe_data_v1.jsonl",
+  "file_size_mb": 439.228,
+  "total_lines": 269378,
+  "sampled": 25000,
+  "avg_length": 1589.76288,
+  "median_length": 752.0,
+  "p10": 187.0,
+  "p90": 3211.0,
+  "max_length": 178482,
+  "min_length": 2,
+  "empty_pct": 0.0,
+  "short_pct": 3.832,
+  "top_keys": [
+    [
+      "text",
+      25000
+    ],
+    [
+      "url",
+      25000
+    ]
+  ]
+}
+2025-11-25 22:35:55 [INFO] category percentages in raw input file:
+2025-11-25 22:36:19 [INFO] {
+  "SHORT_ENGLISH": 7.144,
+  "CODE_HEAVY": 21.012,
+  "GOOD_ENGLISH": 40.388000000000005,
+  "HTML": 23.888,
+  "NON_ENGLISH_LANG": 7.568
+}
+2025-11-25 22:36:19 [INFO] Saved raw category percentages to reports/raw_category_pct.json
+2025-11-25 22:36:19 [INFO] Saved raw category percentage plot to figures/raw_category_pct.pdf
+2025-11-25 22:36:19 [INFO] Deduplication...
+2025-11-25 22:36:21 [INFO] Deduplicated data saved to data/dedup/dedup.jsonl
+2025-11-25 22:36:21 [INFO] Cleaning dataset...
+2025-11-25 22:41:32 [INFO] Cleaned data saved to data/clean/clean.jsonl
+2025-11-25 22:41:32 [INFO] Cleaning summary: {'KEPT': 107320, 'NON_ENGLISH': 21200, 'CODE_HEAVY': 72472, 'HTML_STRIPPED': 53294, 'TOO_SHORT': 19622, 'TOO_LONG': 282}
+2025-11-25 22:41:32 [INFO] Saved cleaning report figure to figures/clean_data_hist.pdf
+2025-11-25 22:41:32 [INFO] Inspecting cleaned dataset...
+2025-11-25 22:42:07 [INFO] Clean dataset category percentages:
+2025-11-25 22:42:07 [INFO] {
+  "GOOD_ENGLISH": 99.272,
+  "SHORT_ENGLISH": 0.528,
+  "HTML": 0.2
+}
+2025-11-25 22:42:07 [INFO] Saved clean category percentages to reports/clean_category_pct.json
+2025-11-25 22:42:07 [INFO] Saved clean category percentage plot to figures/clean_category_pct.pdf
+2025-11-25 22:42:07 [INFO] Running quality report on cleaned dataset...

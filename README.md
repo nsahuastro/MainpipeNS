@@ -305,7 +305,7 @@ MainpipeNS requires the following packages:
 | `lingua` | Language detection (English filtering) |
 | `detoxify` | Toxicity scoring for quality reports |
 | `tiktoken` | GPT-2 BPE tokenization |
-| `simhash` | Fuzzy deduplication (optional) |
+| `simhash` | Fuzzy / near deduplication |
 | `torch` | PyTorch dependency for transformers |
 | `transformers` | Hugging Face models (GPT-2 for perplexity) |
 | `tqdm` | Progress bars for long-running tasks |

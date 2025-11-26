@@ -287,55 +287,13 @@ Created by: `src/reporting/meta_writer.py`
 
 Saved at: `data/final/meta.json`
 
-## 10. Running the Pipeline via CLI
+## 10. Requirements & Installation
 
-### 10.1 Basic usage
-
-```bash
-python main.py --raw data/raw/mainpipe_data_v1.jsonl
-```
-
-### 10.2 What happens when you run it
-
-The pipeline automatically performs:
-
-- Raw inspection + summary reports
-- Deduplication
-- Cleaning
-- Cleaned dataset inspection
-- Token length stats
-- Tokenization (BOS/EOS)
-- Packing into 2048-token blocks
-- Train/Val/Test sharding
-- Quality report
-- Metadata export
-
-All outputs saved under: `reports/`, `figures/`, `data/dedup/`, `data/clean/`, `data/final/`
-
-## 11. Outputs Produced by the Pipeline
-
-| File / Folder | Description |
-|---|---|
-| `reports/raw_doc_stats.json` | Raw key/length distribution |
-| `reports/raw_category_pct.json` | Category distribution (raw) |
-| `reports/clean_category_pct.json` | Category distribution (cleaned) |
-| `reports/token_length_stats.json` | Token length statistics |
-| `reports/quality_report.json` | PII, toxicity, perplexity, language |
-| `figures/*.pdf` | Histograms and category plots |
-| `data/dedup/*.jsonl` | Deduplicated dataset |
-| `data/clean/*.jsonl` | Fully cleaned dataset |
-| `data/final/tokenized.jsonl` | Tokenized documents |
-| `data/final/packed_blocks.jsonl` | 2048-token fixed blocks |
-| `data/final/sharded_dataset/` | Train/Val/Test shards |
-| `data/final/meta.json` | Pipeline metadata |
-
-## 12. Requirements & Installation
-
-### 12.1 Python Version
+### 10.1 Python Version
 
 - The pipeline is build using **Python 3.13.0** , it should work with **Python 3.10+** 
 
-### 12.2 Dependencies
+### 10.2 Dependencies
 
 MainpipeNS requires the following packages:
 
@@ -352,7 +310,7 @@ MainpipeNS requires the following packages:
 | `transformers` | Hugging Face models (GPT-2 for perplexity) |
 | `tqdm` | Progress bars for long-running tasks |
 
-### 12.3 Installation
+### 10.3 Installation
 
 Clone the repository and install dependencies:
 
@@ -370,7 +328,47 @@ venv\Scripts\activate     # On Windows
 pip install -r requirements.txt
 ```
 
----
+## 11. Running the Pipeline via CLI
+
+### 11.1 Basic usage
+
+```bash
+python main.py --raw data/raw/mainpipe_data_v1.jsonl
+```
+
+### 11.2 What happens when you run it
+
+The pipeline automatically performs:
+
+- Raw inspection + summary reports
+- Deduplication
+- Cleaning
+- Cleaned dataset inspection
+- Token length stats
+- Tokenization (BOS/EOS)
+- Packing into 2048-token blocks
+- Train/Val/Test sharding
+- Quality report
+- Metadata export
+
+All outputs saved under: `reports/`, `figures/`, `data/dedup/`, `data/clean/`, `data/final/`
+
+## 12. Outputs Produced by the Pipeline
+
+| File / Folder | Description |
+|---|---|
+| `reports/raw_doc_stats.json` | Raw key/length distribution |
+| `reports/raw_category_pct.json` | Category distribution (raw) |
+| `reports/clean_category_pct.json` | Category distribution (cleaned) |
+| `reports/token_length_stats.json` | Token length statistics |
+| `reports/quality_report.json` | PII, toxicity, perplexity, language |
+| `figures/*.pdf` | Histograms and category plots |
+| `data/dedup/*.jsonl` | Deduplicated dataset |
+| `data/clean/*.jsonl` | Fully cleaned dataset |
+| `data/final/tokenized.jsonl` | Tokenized documents |
+| `data/final/packed_blocks.jsonl` | 2048-token fixed blocks |
+| `data/final/sharded_dataset/` | Train/Val/Test shards |
+| `data/final/meta.json` | Pipeline metadata |
 
 ## 13. Contact / Notes
 
